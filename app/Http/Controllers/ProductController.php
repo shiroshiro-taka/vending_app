@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -15,34 +17,34 @@ class ProductController extends Controller
     {
         $products = Product::sortable()->get();
 
-        $searchWord = $request->input('searchWord');
+        // $keyWord = $request->input('keyWord');
         $companyId = $request->input('companyId');
 
         $query = Product::query();
 
-        if(isset($searchWord)){
-            $query->where('product_name','LIKE',"%{$searchWord}%");
-        }
+        // if(isset($keyWord)){
+        //     $query->where('product_name','LIKE',"%{$keyWord}%");
+        // }
 
-        if(isset($companyId)){
-            $query->where('company_id',$companyId);
-        }
+        // if(isset($companyId)){
+        //     $query->where('company_id',$companyId);
+        // }
 
-        if($min_price = $request->min_price){
-            $query->where('price', '>=', $min_price);
-        }
+        // if($min_price = $request->min_price){
+        //     $query->where('price', '>=', $min_price);
+        // }
 
-        if($max_price = $request->max_price){
-            $query->where('price', '<=', $max_price);
-        }
+        // if($max_price = $request->max_price){
+        //     $query->where('price', '<=', $max_price);
+        // }
 
-        if($min_stock = $request->min_stock){
-            $query->where('stock', '>=', $min_stock);
-        }
+        // if($min_stock = $request->min_stock){
+        //     $query->where('stock', '>=', $min_stock);
+        // }
 
-        if($max_stock = $request->max_stock){
-            $query->where('stock', '<=', $max_stock);
-        }
+        // if($max_stock = $request->max_stock){
+        //     $query->where('stock', '<=', $max_stock);
+        // }
 
         $products = $query->sortable()->orderBy('company_id', 'asc')->paginate(10);
 
@@ -52,9 +54,24 @@ class ProductController extends Controller
         return view('products.index',[
             'products' => $products,
             'companies' => $companies,
-            'searchWord' => $searchWord,
+            // 'keyWord' => $keyWord,
             'companyId' => $companyId
         ])->with('products', $products);
+    }
+
+    public function search(Request $request)
+    {
+        $query = Product::with('company');
+        $input = $request->all();
+        $companies = (new Company())->getAllCompanies();
+        $model = new Product();
+        $products = $model->getList($input);
+
+        return response()->json([
+            'products' => $products,
+            'companies' => $companies,
+            'price' => $request->minPrice,
+        ]);
     }
 
     /**
@@ -71,7 +88,7 @@ class ProductController extends Controller
 
         try{
 
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             if($request->hasFile('img_path')){
 
@@ -83,14 +100,14 @@ class ProductController extends Controller
 
             $item->saveOrFail();
 
-            \DB::commit();
+            DB::commit();
 
             return redirect('/create');
         }catch(\Throwable $e) {
 
-            \DB::rollback();
+            DB::rollback();
 
-            \Log::error($e);
+            Log::error($e);
 
             throw $e;
         }
@@ -165,7 +182,7 @@ class ProductController extends Controller
 
         try{
             
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $item = Product::findOrFail($id);
 
@@ -179,7 +196,7 @@ class ProductController extends Controller
 
             $item->saveOrFail();
 
-            \DB::commit();
+            DB::commit();
 
             return redirect()->back();
         } catch (ModelNotFoundException $e) {
@@ -187,9 +204,9 @@ class ProductController extends Controller
             throw $e;
         } catch (\Throwable $e) {
 
-            \DB::rollback();
+            DB::rollback();
 
-            \Log::error($e);
+            Log::error($e);
 
             throw $e;
         }
@@ -198,22 +215,25 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    //public function destroy(Product $product)
-    //{
-        //
-        //$product->delete();
-
-        //return redirect('/products');
-    //}
-
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        try {
-            Product::destroy($id);
-            return redirect('/products');
-        } catch (\Throwable $e) {
-            \Log::error($e);
-            throw $e;
-        }
+        
+           DB::beginTransaction();
+
+           try {
+            $product = Product::find($request->input('product'));
+            Log::info($request);
+            Log::info($request->input('product'));
+            Log::info($product);
+            //$products = Products::findOrFail($request->id);
+            $product->delete();
+
+            DB::commit();
+            return response()->json(['success' => true]);
+
+           } catch (\Exeption $e) {
+            DB::rollback();
+            return response()->json(['success' => false, 'message' => '削除に失敗しました']);
+           }
     }
 }

@@ -6,12 +6,14 @@
 
 
     <div class="search mt-5">
-        <form action="{{ route('products.index') }}" method="GET" class="row g-3">
+        <form class="row g-3">
             <div class="col-sm-12 col-md-3">
-                <input type="text" name="searchWord" class="form-control" placeholder="検索キーワード" value="{{ $searchWord }}">
+                {{-- <label class="col-sm-2 col-form-label">商品名</label> --}}
+                <input type="text" class="form-control" name="keyword" id="name" placeholder="商品名">
             </div>
             <div class="col-sm-12 col-md-3">
-                <select class="form-control" name="companyId" value="{{ $companyId}}">
+                {{-- <label class="col-sm-4 col-form-label">メーカー名</label>     --}}
+                <select class="form-control" name="companyId" id="company">
                     <option value="">メーカー名</option>
                     @foreach($companies as $id => $company_name)
                         <option value="{{ $id }}">
@@ -19,27 +21,28 @@
                         </option>
                     @endforeach
                 </select>
-            </div>
+            </div>   
             <div class="col-sm-12 col-md-3">
-                <input type="number" name="min_price" class="form-control" placeholder="最小価格" value="{{ request('min_price') }}">
+                <input type="number" name="min_price" class="form-control" placeholder="最小価格" id="minPrice">
             </div> 
             <div class="col-sm-12 col-md-3">
-                <input type="number" name="max_price" class="form-control" placeholder="最大価格" value="{{ request('max_price') }}">
+                <input type="number" name="max_price" class="form-control" placeholder="最大価格" id="maxPrice">
             </div>
             <div class="col-sm-12 col-md-3">
-                <input type="number" name="min_stock" class="form-control" placeholder="最小在庫" value="{{ request('min_stock') }}">
+                <input type="number" name="min_stock" class="form-control" placeholder="最小在庫" id="minStock">
             </div>
             <div class="col-sm-12 col-md-3">
-                <input type="number" name="max_stock" class="form-control" placeholder="最大在庫" value="{{ request('max_stock') }}">
+                <input type="number" name="max_stock" class="form-control" placeholder="最大在庫" id="maxStock">
             </div>                           
             <div class="col-sm-12 col-md-1">
-                <button class="btn btn-outline-secondary" type="submit">検索</button>
+                {{-- <button class="btn btn-outline-secondary" type="submit">検索</button> --}}
+                <button class="btn btn-primary" id="search-btn">検索</button>
             </div>
         </form>
     </div>
     
     <div class="card products mt-5">
-        <table class="table table-striped">
+        <table class="table table-striped" id="product-table">
             <thead>
                 <tr>
                     <th scope="col">@sortablelink('id', 'ID')</th>
@@ -51,23 +54,23 @@
                     <th><a href="{{ route('products.create') }}" class="btn btn-warning mb-1">新規登録</a></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="search-result">
             @foreach ($products as $product)
                 <tr>
-                    <th scope="row">{{ $product->id }}</th>
-                    <td><img src="{{ asset($product->img_path) }}" alt="商品画像" width="100"></td>
+                    <td scope="row">{{ $product->id }}</td>
+                    <td><img src="{{ asset($product->img_path) }}" alt="商品画像" width="100"></td>    
                     <td>{{ $product->product_name }}</td>
                     <td>￥{{ $product->price }}</td>
                     <td>{{ $product->stock }}</td>
                     <td>{{ $product->company->company_name }}</td>
-                    <td>
-                        <a href="{{ route('products.show', $product) }}" class="btn btn-info btn-sm mx-1">詳細</a>
-                        <form method="POST" action="{{ route('products.destroy', $product) }}" class="d-inline">
+                    <td><a href="{{ route('products.show', $product) }}" class="btn btn-info btn-sm mx-1">詳細</a></td>
+                    <td><a href="{{ route('products.edit', $product) }}" class="btn btn-warning btn-sm mx-1">編集</a></td>
+                        {{-- <form method="POST" action="{{ route('products.destroy', $product) }}" class="d-inline"> --}}
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm mx-1" onclick='return confirm("削除しますか？");'>削除</button>
-                        </form>
-                    </td>
+                            {{-- <button type="submit" class="btn btn-danger btn-sm mx-1" onclick='return confirm("削除しますか？");'>削除</button> --}}
+                    <td><button data-product_id="{{ $product->id }}" type="submit" class="btn btn-danger btn-sm mx-1">削除</button></td>
+                        {{-- </form> --}}
                 </tr>
             @endforeach
             </tbody>

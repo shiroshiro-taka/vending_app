@@ -21,6 +21,8 @@ Route::group(['middleware' => 'auth'], function () {
 //一覧画面
 Route::get('/index',[ProductController::class, 'index'])->name('product.index');
 
+Route::get('/search', [ProductController::class, 'search'])->name('product.search');
+
 //詳細画面
 Route::get('/show/{id}', [ProductController::class, 'show'])->name('product.show');
 
@@ -37,4 +39,4 @@ Route::post('/store', [ProductController::class, 'store'])->name('product.store'
 Route::post('/update/{id}', [ProductController::class, 'update'])->name('product.update');
 
 //削除処理
-Route::post('/destroy/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
+Route::post('/destroy', [ProductController::class, 'destroy'])->name('product.destroy');
