@@ -46,12 +46,12 @@
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th data-sorter="false">商品画像</th>
+                    <th>商品画像</th>
                     <th>商品名</th>
                     <th>価格</th>
                     <th>在庫数</th>
                     <th>メーカー名</th>
-                    <th data-sorter="false" colspan="3"><a href="{{ route('products.create') }}" class="btn btn-warning mb-1">新規登録</a></th>
+                    <th colspan="3"><a href="{{ route('products.create') }}" class="btn btn-warning mb-1">新規登録</a></th>
                 </tr>
             </thead>
             <tbody id="search-result">

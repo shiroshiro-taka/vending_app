@@ -100,6 +100,7 @@ $(function() {
                     console.log(html);
                     
             result.append(html);
+            $('#product-table').trigger("update");
             deleteEvent()
             console.log("処理完了");
             });
