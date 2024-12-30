@@ -1,13 +1,11 @@
-function sortEvent() {
-    $(document).ready(function() { 
-        $('#product-table').tablesorter({
-            headers: {
-                    1: {sorter:false},
-                    6: {sorter:false}
-                },
-        });
+$(document).ready(function() { 
+    $('#product-table').tablesorter({
+        headers: {
+                1: {sorter:false},
+                6: {sorter:false}
+            },
     });
-}
+});
 
 function deleteEvent() {
     $('.btn-danger').click(function(e){
