@@ -8,11 +8,9 @@
     <div class="search mt-5">
         <form class="row g-3">
             <div class="col-sm-12 col-md-3">
-                {{-- <label class="col-sm-2 col-form-label">商品名</label> --}}
                 <input type="text" class="form-control" name="keyword" id="name" placeholder="商品名">
             </div>
             <div class="col-sm-12 col-md-3">
-                {{-- <label class="col-sm-4 col-form-label">メーカー名</label>     --}}
                 <select class="form-control" name="companyId" id="company">
                     <option value="">メーカー名</option>
                     @foreach($companies as $id => $company_name)
@@ -35,7 +33,6 @@
                 <input type="number" name="max_stock" class="form-control" placeholder="最大在庫" id="maxStock">
             </div>                           
             <div class="col-sm-12 col-md-1">
-                {{-- <button class="btn btn-outline-secondary" type="submit">検索</button> --}}
                 <button class="btn btn-primary" id="search-btn">検索</button>
             </div>
         </form>
@@ -65,12 +62,9 @@
                     <td>{{ $product->company->company_name }}</td>
                     <td><a href="{{ route('products.show', $product) }}" class="btn btn-info btn-sm mx-1">詳細</a></td>
                     <td><a href="{{ route('products.edit', $product) }}" class="btn btn-warning btn-sm mx-1">編集</a></td>
-                        {{-- <form method="POST" action="{{ route('products.destroy', $product) }}" class="d-inline"> --}}
                             @csrf
                             @method('DELETE')
-                            {{-- <button type="submit" class="btn btn-danger btn-sm mx-1" onclick='return confirm("削除しますか？");'>削除</button> --}}
                     <td><button data-product_id="{{ $product->id }}" type="submit" class="btn btn-danger btn-sm mx-1">削除</button></td>
-                        {{-- </form> --}}
                 </tr>
             @endforeach
             </tbody>

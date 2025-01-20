@@ -15,46 +15,15 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::sortable()->get();
-
-        // $keyWord = $request->input('keyWord');
         $companyId = $request->input('companyId');
-
         $query = Product::query();
-
-        // if(isset($keyWord)){
-        //     $query->where('product_name','LIKE',"%{$keyWord}%");
-        // }
-
-        // if(isset($companyId)){
-        //     $query->where('company_id',$companyId);
-        // }
-
-        // if($min_price = $request->min_price){
-        //     $query->where('price', '>=', $min_price);
-        // }
-
-        // if($max_price = $request->max_price){
-        //     $query->where('price', '<=', $max_price);
-        // }
-
-        // if($min_stock = $request->min_stock){
-        //     $query->where('stock', '>=', $min_stock);
-        // }
-
-        // if($max_stock = $request->max_stock){
-        //     $query->where('stock', '<=', $max_stock);
-        // }
-
         $products = $query->sortable()->orderBy('company_id', 'asc')->paginate(10);
-
         $company = new Company;
         $companies = $company->getLists();
        
         return view('products.index',[
             'products' => $products,
             'companies' => $companies,
-            // 'keyWord' => $keyWord,
             'companyId' => $companyId
         ])->with('products', $products);
     }
@@ -85,23 +54,10 @@ class ProductController extends Controller
             $query->where('stock', '<=', $request->input('maxStock'));
         }
 
-
         //結果を昇順でソート 
         $products = $query->orderBy('id', 'asc')->get();
 
         return response()->json(['products' => $products]);
-
-        // $query = Product::with('company');
-        // $input = $request->all();
-        // $companies = (new Company())->getAllCompanies();
-        // $model = new Product();
-        // $products = $model->getList($input);
-
-        // return response()->json([
-        //     'products' => $products,
-        //     'companies' => $companies,
-        //     'price' => $request->minPrice,
-        // ]);
     }
 
     /**
@@ -203,7 +159,6 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
         $request->validate([
             'product_name' => 'required',
             'price' => 'required',
