@@ -61,17 +61,47 @@ class ProductController extends Controller
 
     public function search(Request $request)
     {
-        $query = Product::with('company');
-        $input = $request->all();
-        $companies = (new Company())->getAllCompanies();
-        $model = new Product();
-        $products = $model->getList($input);
+        // company_idとcompany_nameを連携
+        $query = Product::select('products.*', 'company_name')
+            ->join('companies', 'companies.id', '=', 'products.company_id');
 
-        return response()->json([
-            'products' => $products,
-            'companies' => $companies,
-            'price' => $request->minPrice,
-        ]);
+        // 絞り込み検索
+        if($request->filled('keyword')){
+            $query->where('product_name','LIKE','%' .$request->input('keyword'). '%');
+        }
+        if($request->filled('companyId')){
+            $query->where('company_id',$request->input('companyId'));
+        }
+        if($request->filled('minPrice')){
+            $query->where('price', '>=', $request->input('minPrice'));
+        }
+        if($request->filled('maxPrice')){
+            $query->where('price', '<=', $request->input('maxPrice'));
+        }
+        if($request->filled('minStock')){
+            $query->where('stock', '>=', $request->input('minStock'));
+        }
+        if($request->filled('maxStock')){
+            $query->where('stock', '<=', $request->input('maxStock'));
+        }
+
+
+        //結果を昇順でソート 
+        $products = $query->orderBy('id', 'asc')->get();
+
+        return response()->json(['products' => $products]);
+
+        // $query = Product::with('company');
+        // $input = $request->all();
+        // $companies = (new Company())->getAllCompanies();
+        // $model = new Product();
+        // $products = $model->getList($input);
+
+        // return response()->json([
+        //     'products' => $products,
+        //     'companies' => $companies,
+        //     'price' => $request->minPrice,
+        // ]);
     }
 
     /**

@@ -79,16 +79,14 @@ $(function() {
             var result = $('#search-result');
             result.empty(); //結果を一度クリア
             $.each(data.products, function (index, product) {
-            //console.log(data.products);
-            //console.log(data.companies[product.company_id -1]);
-            //console.log(data.companies[product.company_id -1].company_name);
+            console.log(data.products);           
             var html = `<tr>
                     <td scope="row">${product.id}</td>
                     <td><img src="${product.img_path}" alt="商品画像" width="100"></td>
                     <td>${product.product_name}</td>
                     <td>￥${product.price}</td>
                     <td>${product.stock}</td>
-                    <td>${data.companies[product.company_id -1].company_name}</td>
+                    <td>${product.company_name}</td>
                     <td><a href="products/${product.id}" class="btn btn-info btn-sm mx-1">詳細</a></td>
                     <td><a href="products/${product.id}/edit" class="btn btn-warning btn-sm mx-1">編集</a></td>
                     <td>
